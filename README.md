@@ -1,0 +1,5 @@
+# Serverless Computing in Azure Kubernetes Service mit KEDA
+
+Demo Code shown during my talk at BASTA!2020 in Mainz
+
+Mit Azure Functions stellt Microsoft ein flexibles und mächtiges Framework für Serverless Computing bereit, womit skalierbare und reaktive Anwendungen erstellt werden können. Mit Kubernetes Event-driven Applications (KEDA), können Sie Ihre Azure Functions problemlos in einem Kubernetes-Cluster betreiben. Doch KEDA kümmert sich nicht nur um den Betrieb. Durch geschickte Integration von sowohl externen als auch internen Nachrichten- und Ereignissystemen wie Azure Service Bus oder Azure Event Hub skaliert KEDA Ihre Azure Functions automatisch anhand der anfallenden Anfragen. In diesem Vortrag zeigt Thorsten Hans, wie Sie zukunftssichere, skalierbare und reaktive cloud-native Anwendungen erstellen.

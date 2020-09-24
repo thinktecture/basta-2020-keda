@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-transformer
+  namespace: message-transformer
+  labels:
+    app: message-transformer
+spec:
+  selector:
+    matchLabels:
+      app: message-transformer
+  template:
+    metadata:
+      labels:
+        app: message-transformer
+    spec:
+      containers:
+      - name: message-transformer
+        image: basta2020keda.azurecr.io/functions/transformer:0.0.5
+        env:
+        - name: AzureFunctionsJobHost__functions__0
+          value: MessageReverser
+        envFrom:
+        - secretRef:
+            name: az-storage-auth
+---
+apiVersion: keda.k8s.io/v1alpha1
+kind: ScaledObject
+metadata:
+  name: message-transformer
+  namespace: message-transformer
+  labels:
+    deploymentName: message-transformer
+spec:
+  scaleTargetRef:
+    deploymentName: message-transformer
+  pollingInterval: 5
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  cooldownPeriod: 60
+  triggers:
+  - type: azure-queue
+    metadata: 
+      queueLength: '3'
+      connection: BastaStorageAccount
+      queueName: aaa-tasks 

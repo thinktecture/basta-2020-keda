@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-dispatcher
+  namespace: message-dispatcher
+  labels:
+    app: message-dispatcher
+spec:
+  selector:
+    matchLabels:
+      app: message-dispatcher
+  template:
+    metadata:
+      labels:
+        app: message-dispatcher
+    spec:
+      containers:
+      - name: message-dispatcher
+        image: basta2020keda.azurecr.io/functions/dispatcher:0.0.4
+        env:
+        - name: AzureFunctionsJobHost__functions__0
+          value: MessageDispatcher
+        envFrom:
+        - secretRef:
+            name: az-storage-auth
+---
+apiVersion: keda.k8s.io/v1alpha1
+kind: ScaledObject
+metadata:
+  name: message-dispatcher
+  namespace: message-dispatcher
+  labels:
+    deploymentName: message-dispatcher
+spec:
+  scaleTargetRef:
+    deploymentName: message-dispatcher
+  pollingInterval: 5
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  cooldownPeriod: 60
+  triggers:
+  - type: azure-queue
+    metadata:
+      type: queueTrigger 
+      queueLength: '3'
+      connection: BastaStorageAccount
+      queueName: aaa-reversed
+      name: queueItem
+---
+
